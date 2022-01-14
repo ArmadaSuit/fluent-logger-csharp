@@ -9,3 +9,7 @@ insert_final_newline = true
 [*.cs]
 indent_size = 4
 dotnet_sort_system_directives_first = true
+
+resharper_csharp_place_accessorholder_attribute_on_same_line = never
+resharper_csharp_place_accessor_attribute_on_same_line = never
+
