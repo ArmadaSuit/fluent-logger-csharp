@@ -4,4 +4,8 @@
         <TargetFrameworks>net5.0;net6.0;netcoreapp3.1</TargetFrameworks>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MessagePack" Version="2.0.323" />
+    </ItemGroup>
+
 </Project>
