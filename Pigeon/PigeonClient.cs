@@ -21,7 +21,7 @@ namespace Pigeon
             _client = new TcpClient();
         }
 
-        private async Task ConnectAsync()
+        public async Task ConnectAsync()
         {
             await _client.ConnectAsync(_config.Host, _config.Port).ConfigureAwait(false);
         }
