@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using MessagePack;
@@ -7,13 +8,13 @@ using Pigeon.EventModes;
 
 namespace Pigeon
 {
-    public class PigeonClient : IDisposable
+    public class PigeonClient : IPigeonClient
     {
-        private NetworkStream _stream;
+        private bool _disposed;
+
+        private Stream _stream;
         private readonly TcpClient _client;
         private readonly PigeonConfig _config;
-
-        private bool _disposed;
 
         public PigeonClient(PigeonConfig config)
         {
@@ -26,12 +27,17 @@ namespace Pigeon
             await _client.ConnectAsync(_config.Host, _config.Port).ConfigureAwait(false);
         }
 
-        public async Task SendAsync(byte[] data)
+        private async Task EnsureConnected()
         {
             if (!_client.Connected)
             {
                 await ConnectAsync().ConfigureAwait(false);
             }
+        }
+
+        private async Task SendAsync(byte[] data)
+        {
+            await EnsureConnected();
 
             _stream = _client.GetStream();
 
@@ -62,11 +68,6 @@ namespace Pigeon
         {
             var message = new PackedForwardMode { Tag = tag, Entries = data };
             await SendAsync(message).ConfigureAwait(false);
-        }
-
-        public async Task SendAsync<T>(string tag, T data)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task SendAsync(MessageMode data)
