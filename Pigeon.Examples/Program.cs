@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Pigeon.EventModes;
 
 namespace Pigeon.Examples
 {
     class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var pigeonClient = new PigeonClient(new PigeonConfig("127.0.0.1", 24224));
-            pigeonClient.SendAsync(new MessageMode
+            using var pigeonClient = new PigeonClient(new PigeonConfig("127.0.0.1", 24224));
+            await pigeonClient.SendAsync(new MessageMode
             {
                 Tag = "pigeon.example",
                 Time = new EventTime(DateTime.Now),
@@ -17,9 +18,9 @@ namespace Pigeon.Examples
                 {
                     { "mode", "MessageMode" }
                 }
-            }).Wait();
+            });
 
-            pigeonClient.SendAsync(new ForwardMode
+            await pigeonClient.SendAsync(new ForwardMode
             {
                 Tag = "pigeon.example",
                 Entries = new List<Entry>
@@ -30,9 +31,9 @@ namespace Pigeon.Examples
                         Record = new Dictionary<string, object> { { "mode", "ForwardMode" } }
                     }
                 }
-            }).Wait();
+            });
 
-            pigeonClient.SendAsync(new PackedForwardMode
+            await pigeonClient.SendAsync(new PackedForwardMode
             {
                 Tag = "pigeon.example",
                 Entries = new List<Entry>
@@ -46,9 +47,9 @@ namespace Pigeon.Examples
                         }
                     }
                 }
-            }).Wait();
+            });
 
-            pigeonClient.SendAsync(new CompressedPackedForwardMode
+            await pigeonClient.SendAsync(new CompressedPackedForwardMode
             {
                 Tag = "pigeon.example",
                 Entries = new List<Entry>
@@ -59,7 +60,7 @@ namespace Pigeon.Examples
                         Record = new Dictionary<string, object> { { "mode", "CompressedPackedForwardMode" } }
                     }
                 }
-            }).Wait();
+            });
         }
     }
 }
