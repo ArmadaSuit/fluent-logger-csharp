@@ -10,9 +10,29 @@ namespace Pigeon.Examples
         public static async Task Main(string[] args)
         {
             using var pigeonClient = new PigeonClient(new PigeonConfig("127.0.0.1", 24224));
+            const string tag = "pigeon.example";
+            // send single entry data
+            await pigeonClient.SendAsync(tag, new Dictionary<string, object>
+            {
+                { "mode", "data will be converted to MessageMode" }
+            });
+
+            var entries = new List<Entry>
+            {
+                new Entry
+                {
+                    Time = new EventTime(DateTime.Now),
+                    Record = new Dictionary<string, object>
+                        { { "mode", "data will be converted to PackedForwardMode" } }
+                }
+            };
+            // send multiple entry data
+            await pigeonClient.SendAsync(tag, entries);
+
+            // if specify mode
             await pigeonClient.SendAsync(new MessageMode
             {
-                Tag = "pigeon.example",
+                Tag = tag,
                 Time = new EventTime(DateTime.Now),
                 Record = new Dictionary<string, object>
                 {
@@ -22,7 +42,7 @@ namespace Pigeon.Examples
 
             await pigeonClient.SendAsync(new ForwardMode
             {
-                Tag = "pigeon.example",
+                Tag = tag,
                 Entries = new List<Entry>
                 {
                     new Entry
@@ -35,7 +55,7 @@ namespace Pigeon.Examples
 
             await pigeonClient.SendAsync(new PackedForwardMode
             {
-                Tag = "pigeon.example",
+                Tag = tag,
                 Entries = new List<Entry>
                 {
                     new Entry
@@ -51,7 +71,7 @@ namespace Pigeon.Examples
 
             await pigeonClient.SendAsync(new CompressedPackedForwardMode
             {
-                Tag = "pigeon.example",
+                Tag = tag,
                 Entries = new List<Entry>
                 {
                     new Entry
