@@ -79,7 +79,7 @@ namespace Pigeon
         }
 
         /// <summary>
-        /// send a data to will be converted to Message Mode server.
+        /// send a data that will be converted to Message Mode to server.
         /// </summary>
         /// <param name="tag">tag</param>
         /// <param name="time">event time</param>
@@ -92,7 +92,7 @@ namespace Pigeon
         }
 
         /// <summary>
-        /// send a data will be converted to Message Mode to server.
+        /// send a data that will be converted to Message Mode to server.
         /// </summary>
         /// <param name="tag">tag</param>
         /// <param name="time">event time</param>
