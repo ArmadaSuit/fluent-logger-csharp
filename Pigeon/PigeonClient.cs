@@ -187,10 +187,9 @@ namespace Pigeon
             {
                 if (disposing)
                 {
+                    _stream?.Dispose();
+                    _client?.Dispose();
                 }
-
-                _stream?.Dispose();
-                _client?.Dispose();
 
                 _disposed = true;
             }
