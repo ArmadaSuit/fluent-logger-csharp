@@ -34,6 +34,21 @@ namespace Pigeon
         public int Port { get; }
 
         /// <summary>
+        /// the connect timeout value in milliseconds.
+        /// </summary>
+        public int? ConnectTimeout { get; set; }
+
+        /// <summary>
+        /// the send timeout value of the connection in milliseconds.
+        /// </summary>
+        public int? SendTimeout { get; set; }
+
+        /// <summary>
+        /// the receive timeout value of the connection in milliseconds.
+        /// </summary>
+        public int? ReceiveTimeout { get; set; }
+
+        /// <summary>
         /// constructor.
         /// </summary>
         /// <param name="host">host name</param>

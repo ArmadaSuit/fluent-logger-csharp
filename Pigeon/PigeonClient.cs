@@ -43,6 +43,15 @@ namespace Pigeon
         {
             _config = config;
             _client = new TcpClient();
+            if (config.SendTimeout.HasValue)
+            {
+                _client.SendTimeout = config.SendTimeout.Value;
+            }
+
+            if (config.ReceiveTimeout.HasValue)
+            {
+                _client.ReceiveTimeout = config.ReceiveTimeout.Value;
+            }
         }
 
         /// <summary>
@@ -51,7 +60,22 @@ namespace Pigeon
         /// <returns>Task</returns>
         public async Task ConnectAsync()
         {
-            await _client.ConnectAsync(_config.Host, _config.Port).ConfigureAwait(false);
+            if (_config.ConnectTimeout.HasValue)
+            {
+                // References
+                // https://makolyte.com/how-to-set-a-timeout-for-tcpclient-connectasync/
+                var cancelTask = Task.Delay(_config.ConnectTimeout.Value);
+                var connectTask = _client.ConnectAsync(_config.Host, _config.Port);
+                await await Task.WhenAny(connectTask, cancelTask);
+                if (cancelTask.IsCompleted)
+                {
+                    throw new SocketException((int) SocketError.TimedOut);
+                }
+            }
+            else
+            {
+                await _client.ConnectAsync(_config.Host, _config.Port).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
