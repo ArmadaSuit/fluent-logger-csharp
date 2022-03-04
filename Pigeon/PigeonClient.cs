@@ -20,7 +20,9 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using MessagePack;
+using MessagePack.Resolvers;
 using Pigeon.EventModes;
+using Pigeon.Resolvers;
 
 namespace Pigeon
 {
@@ -29,6 +31,21 @@ namespace Pigeon
     /// </summary>
     public class PigeonClient : IPigeonClient
     {
+
+        private static readonly IFormatterResolver Resolver = CompositeResolver.Create(
+            BuiltinResolver.Instance,
+            AttributeFormatterResolver.Instance,
+            DynamicEnumResolver.Instance,
+            DynamicGenericResolver.Instance,
+            DynamicUnionResolver.Instance,
+            DynamicObjectResolver.Instance,
+            PigeonPrimitiveObjectResolver.Instance,
+            DynamicContractlessObjectResolver.Instance
+        );
+
+        private static readonly MessagePackSerializerOptions Options =
+            MessagePackSerializerOptions.Standard.WithResolver(Resolver);
+
         private bool _disposed;
 
         private Stream _stream;
@@ -163,7 +180,7 @@ namespace Pigeon
         /// <returns>Task</returns>
         public async Task SendAsync(MessageMode data)
         {
-            var bytes = MessagePackSerializer.Serialize(data);
+            var bytes = MessagePackSerializer.Serialize(data, Options);
             await SendAsync(bytes).ConfigureAwait(false);
         }
 
@@ -174,7 +191,7 @@ namespace Pigeon
         /// <returns>Task</returns>
         public async Task SendAsync(ForwardMode data)
         {
-            var bytes = MessagePackSerializer.Serialize(data);
+            var bytes = MessagePackSerializer.Serialize(data, Options);
             await SendAsync(bytes).ConfigureAwait(false);
         }
 
@@ -185,7 +202,7 @@ namespace Pigeon
         /// <returns>Task</returns>
         public async Task SendAsync(PackedForwardMode data)
         {
-            var bytes = MessagePackSerializer.Serialize(data);
+            var bytes = MessagePackSerializer.Serialize(data, Options);
             await SendAsync(bytes).ConfigureAwait(false);
         }
 
@@ -196,7 +213,7 @@ namespace Pigeon
         /// <returns>Task</returns>
         public async Task SendAsync(CompressedPackedForwardMode data)
         {
-            var bytes = MessagePackSerializer.Serialize(data);
+            var bytes = MessagePackSerializer.Serialize(data, Options);
             await SendAsync(bytes).ConfigureAwait(false);
         }
 
