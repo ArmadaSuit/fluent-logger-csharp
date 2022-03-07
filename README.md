@@ -1,5 +1,8 @@
 # Pigeon
 
+[![Nuget](https://img.shields.io/nuget/v/pigeon)](https://www.nuget.org/packages/Pigeon/)
+[![](https://img.shields.io/github/license/ArmadaSuit/fluent-logger-csharp)](https://github.com/ArmadaSuit/fluent-logger-csharp/blob/main/LICENSE)
+
 Pigeon is simple TCP(not SSL/TLS) client that supports part
 of [Fluent forward protocol v1](https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1).
 
@@ -102,6 +105,15 @@ Remember: Fluent Bit v1.6.0 or higher
     Name    stdout
     Match   *
 ```
+
+## Limitations
+
+### Serialization
+
+In Record or Option section (i.e. `Dictionary<string, object>` type), `DateTime` and `DateTimeOffset` is serialized to
+ISO 8601 style `string` (
+see [Reference](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip))
+with default setting.
 
 ## License
 
