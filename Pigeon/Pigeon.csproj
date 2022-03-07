@@ -9,8 +9,8 @@
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/ArmadaSuit/fluent-logger-csharp.git</RepositoryUrl>
-        <Version>0.0.2</Version>
         <Authors>ArmadaSuit</Authors>
+        <Description>Simple Fluentd/Fluent Bit client. Support part of "Fluent forward protocol v1".</Description>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
