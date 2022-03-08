@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using MessagePack;
 
 namespace Pigeon
 {
@@ -47,6 +48,12 @@ namespace Pigeon
         /// the receive timeout value of the connection in milliseconds.
         /// </summary>
         public int? ReceiveTimeout { get; set; }
+
+        /// <summary>
+        /// serializer options.
+        /// <see href="https://github.com/neuecc/MessagePack-CSharp#main-extension-point-iformatterresolver">more details</see>
+        /// </summary>
+        public MessagePackSerializerOptions SerializerOptions { get; set; }
 
         /// <summary>
         /// constructor.
