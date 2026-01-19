@@ -110,7 +110,7 @@ Remember: Fluent Bit v1.6.0 or higher
 
 ### Serialization
 
-In Record or Option section (i.e. `Dictionary<string, object>` type), `DateTime` and `DateTimeOffset` is serialized to
+In Record or Option section (i.e. `Dictionary<string, object>` type), `DateTime`, `DateTimeOffset`, `DateOnly` and `TimeOnly` is serialized to
 ISO 8601 style `string` (
 see [Reference](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip))
 with default setting.

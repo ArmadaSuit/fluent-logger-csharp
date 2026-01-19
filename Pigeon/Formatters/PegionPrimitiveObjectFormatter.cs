@@ -34,15 +34,28 @@ namespace Pigeon.Formatters
         private static readonly ArrayFormatter<DateTimeOffset> DateTimeOffsetArrayFormatter =
             new ArrayFormatter<DateTimeOffset>();
 
+        private static readonly ArrayFormatter<DateOnly> DateOnlyArrayFormatter =
+            new ArrayFormatter<DateOnly>();
+
+        private static readonly ArrayFormatter<TimeOnly> TimeOnlyArrayFormatter =
+            new ArrayFormatter<TimeOnly>();
+
         private readonly IMessagePackFormatter<DateTime> _dateTimeFormatter;
 
         private readonly IMessagePackFormatter<DateTimeOffset> _dateTimeOffsetFormatter;
 
+        private readonly IMessagePackFormatter<DateOnly> _dateOnlyFormatter;
+
+        private readonly IMessagePackFormatter<TimeOnly> _timeOnlyFormatter;
+
         public PigeonPrimitiveObjectFormatter(IMessagePackFormatter<DateTime> dateTimeFormatter,
-            IMessagePackFormatter<DateTimeOffset> dateTimeOffsetFormatter)
+            IMessagePackFormatter<DateTimeOffset> dateTimeOffsetFormatter,
+            IMessagePackFormatter<DateOnly> dateOnlyFormatter, IMessagePackFormatter<TimeOnly> timeOnlyFormatter)
         {
             _dateTimeFormatter = dateTimeFormatter;
             _dateTimeOffsetFormatter = dateTimeOffsetFormatter;
+            _dateOnlyFormatter = dateOnlyFormatter;
+            _timeOnlyFormatter = timeOnlyFormatter;
         }
 
         public void Serialize(ref MessagePackWriter writer, object value, MessagePackSerializerOptions options)
@@ -61,11 +74,23 @@ namespace Pigeon.Formatters
                 case DateTimeOffset dateTimeOffset:
                     _dateTimeOffsetFormatter.Serialize(ref writer, dateTimeOffset, options);
                     return;
+                case DateOnly dateOnly:
+                    _dateOnlyFormatter.Serialize(ref writer, dateOnly, options);
+                    return;
+                case TimeOnly timeOnly:
+                    _timeOnlyFormatter.Serialize(ref writer, timeOnly, options);
+                    return;
                 case DateTime[] dateTimes:
                     DateTimeArrayFormatter.Serialize(ref writer, dateTimes, options);
                     return;
                 case DateTimeOffset[] dateTimeOffsets:
                     DateTimeOffsetArrayFormatter.Serialize(ref writer, dateTimeOffsets, options);
+                    return;
+                case DateOnly[] dateOnlys:
+                    DateOnlyArrayFormatter.Serialize(ref writer, dateOnlys, options);
+                    return;
+                case TimeOnly[] timeOnlys:
+                    TimeOnlyArrayFormatter.Serialize(ref writer, timeOnlys, options);
                     return;
                 case IDictionary dictionary:
                 {

@@ -101,5 +101,40 @@ namespace Pigeon.Formatters
             }
         }
 
+        [ExcludeFormatterFromSourceGeneratedResolver]
+        public sealed class DateOnlyStringFormatter : IMessagePackFormatter<DateOnly>
+        {
+            public string Format { get; set; } = "o";
+
+            public static readonly IMessagePackFormatter<DateOnly> Instance = new DateOnlyStringFormatter();
+
+            public void Serialize(ref MessagePackWriter writer, DateOnly value, MessagePackSerializerOptions options)
+            {
+                writer.Write(value.ToString(Format));
+            }
+
+            public DateOnly Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [ExcludeFormatterFromSourceGeneratedResolver]
+        public sealed class TimeOnlyStringFormatter : IMessagePackFormatter<TimeOnly>
+        {
+            public string Format { get; set; } = "o";
+
+            public static readonly IMessagePackFormatter<TimeOnly> Instance = new TimeOnlyStringFormatter();
+
+            public void Serialize(ref MessagePackWriter writer, TimeOnly value, MessagePackSerializerOptions options)
+            {
+                writer.Write(value.ToString(Format));
+            }
+
+            public TimeOnly Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

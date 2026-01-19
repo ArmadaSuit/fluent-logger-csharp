@@ -53,7 +53,9 @@ namespace Pigeon.Resolvers
 
             private static readonly IMessagePackFormatter<object> ObjectFormatter =
                 new PigeonPrimitiveObjectFormatter(DateAndTimeFormatters.DateTimeStringFormatter.Instance,
-                    DateAndTimeFormatters.DateTimeOffsetStringFormatter.Instance);
+                    DateAndTimeFormatters.DateTimeOffsetStringFormatter.Instance,
+                    DateAndTimeFormatters.DateOnlyStringFormatter.Instance,
+                    DateAndTimeFormatters.TimeOnlyStringFormatter.Instance);
 
             static FormatterCache()
             {
