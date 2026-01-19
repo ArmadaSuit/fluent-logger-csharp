@@ -25,6 +25,10 @@ namespace Pigeon.Formatters
 {
     public sealed class PigeonPrimitiveObjectFormatter : IMessagePackFormatter<object>
     {
+        public static readonly PigeonPrimitiveObjectFormatter Instance = new PigeonPrimitiveObjectFormatter();
+
+        private PigeonPrimitiveObjectFormatter() { }
+
         private static readonly ArrayFormatter<DateTime> DateTimeArrayFormatter = new ArrayFormatter<DateTime>();
 
         private static readonly ArrayFormatter<DateTimeOffset> DateTimeOffsetArrayFormatter =
@@ -55,8 +59,7 @@ namespace Pigeon.Formatters
                     _dateTimeFormatter.Serialize(ref writer, time, options);
                     return;
                 case DateTimeOffset dateTimeOffset:
-                    _dateTimeOffsetFormatter.Serialize(ref writer, dateTimeOffset,
-                        options);
+                    _dateTimeOffsetFormatter.Serialize(ref writer, dateTimeOffset, options);
                     return;
                 case DateTime[] dateTimes:
                     DateTimeArrayFormatter.Serialize(ref writer, dateTimes, options);

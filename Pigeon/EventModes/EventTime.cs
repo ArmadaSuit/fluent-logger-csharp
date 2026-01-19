@@ -83,7 +83,7 @@ namespace Pigeon.EventModes
             NanoSeconds = (dateTimeOffset.UtcTicks % TimeSpan.TicksPerSecond) * 100;
         }
 
-        class EventTimeFormatter : IMessagePackFormatter<EventTime>
+        internal class EventTimeFormatter : IMessagePackFormatter<EventTime>
         {
             public void Serialize(ref MessagePackWriter writer, EventTime value, MessagePackSerializerOptions options)
             {

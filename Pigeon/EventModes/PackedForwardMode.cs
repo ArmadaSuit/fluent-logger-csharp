@@ -43,7 +43,7 @@ namespace Pigeon.EventModes
         /// </summary>
         public Dictionary<string, object> Option { get; set; }
 
-        class PackedForwardModeFormatter : IMessagePackFormatter<PackedForwardMode>
+        internal class PackedForwardModeFormatter : IMessagePackFormatter<PackedForwardMode>
         {
             public void Serialize(ref MessagePackWriter writer, PackedForwardMode value,
                 MessagePackSerializerOptions options)

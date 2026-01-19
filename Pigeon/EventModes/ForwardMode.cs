@@ -42,7 +42,7 @@ namespace Pigeon.EventModes
         /// </summary>
         public Dictionary<string, object> Option { get; set; }
 
-        class ForwardModeFormatter : IMessagePackFormatter<ForwardMode>
+        internal class ForwardModeFormatter : IMessagePackFormatter<ForwardMode>
         {
             public void Serialize(ref MessagePackWriter writer, ForwardMode value, MessagePackSerializerOptions options)
             {

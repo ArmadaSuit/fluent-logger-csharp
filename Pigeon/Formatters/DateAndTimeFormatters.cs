@@ -22,6 +22,7 @@ namespace Pigeon.Formatters
 {
     public static class DateAndTimeFormatters
     {
+        [ExcludeFormatterFromSourceGeneratedResolver]
         public sealed class DateTimeUnixTimeFormatter : IMessagePackFormatter<DateTime>
         {
             public static readonly IMessagePackFormatter<DateTime> Instance = new DateTimeUnixTimeFormatter();
@@ -43,6 +44,7 @@ namespace Pigeon.Formatters
             }
         }
 
+        [ExcludeFormatterFromSourceGeneratedResolver]
         public sealed class DateTimeOffsetUnixTimeFormatter : IMessagePackFormatter<DateTimeOffset>
         {
             public static readonly IMessagePackFormatter<DateTimeOffset> Instance =
@@ -61,15 +63,16 @@ namespace Pigeon.Formatters
             }
         }
 
+        [ExcludeFormatterFromSourceGeneratedResolver]
         public sealed class DateTimeStringFormatter : IMessagePackFormatter<DateTime>
         {
-            public string format { get; set; } = "o";
+            public string Format { get; set; } = "o";
 
             public static readonly IMessagePackFormatter<DateTime> Instance = new DateTimeStringFormatter();
 
             public void Serialize(ref MessagePackWriter writer, DateTime value, MessagePackSerializerOptions options)
             {
-                writer.Write(value.ToString(format));
+                writer.Write(value.ToString(Format));
             }
 
             public DateTime Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
@@ -78,9 +81,10 @@ namespace Pigeon.Formatters
             }
         }
 
+        [ExcludeFormatterFromSourceGeneratedResolver]
         public sealed class DateTimeOffsetStringFormatter : IMessagePackFormatter<DateTimeOffset>
         {
-            public string format { get; set; } = "o";
+            public string Format { get; set; } = "o";
 
             public static readonly IMessagePackFormatter<DateTimeOffset> Instance =
                 new DateTimeOffsetStringFormatter();
@@ -88,7 +92,7 @@ namespace Pigeon.Formatters
             public void Serialize(ref MessagePackWriter writer, DateTimeOffset value,
                 MessagePackSerializerOptions options)
             {
-                writer.Write(value.ToString(format));
+                writer.Write(value.ToString(Format));
             }
 
             public DateTimeOffset Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)

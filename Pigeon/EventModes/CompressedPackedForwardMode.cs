@@ -45,7 +45,7 @@ namespace Pigeon.EventModes
         /// </summary>
         public Dictionary<string, object> Option { get; set; }
 
-        class CompressedPackedForwardModeFormatter : IMessagePackFormatter<CompressedPackedForwardMode>
+        internal class CompressedPackedForwardModeFormatter : IMessagePackFormatter<CompressedPackedForwardMode>
         {
             public void Serialize(ref MessagePackWriter writer, CompressedPackedForwardMode value,
                 MessagePackSerializerOptions options)

@@ -47,7 +47,7 @@ namespace Pigeon.EventModes
         /// </summary>
         public Dictionary<string, object> Option { get; set; }
 
-        class MessageModeFormatter : IMessagePackFormatter<MessageMode>
+        internal class MessageModeFormatter : IMessagePackFormatter<MessageMode>
         {
             public void Serialize(ref MessagePackWriter writer, MessageMode value, MessagePackSerializerOptions options)
             {
