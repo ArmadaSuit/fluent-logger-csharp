@@ -63,9 +63,10 @@ namespace Pigeon.EventModes
 
                 var bufferWriter = new ArrayBufferWriter<byte>();
                 var messagePackWriter = writer.Clone(bufferWriter);
+                var resolver = options.Resolver;
                 foreach (var entry in value.Entries)
                 {
-                    MessagePackSerializer.Serialize(ref messagePackWriter, entry);
+                    resolver.GetFormatterWithVerify<Entry>().Serialize(ref messagePackWriter, entry, options);
                 }
 
                 messagePackWriter.Flush();
@@ -74,7 +75,6 @@ namespace Pigeon.EventModes
 
                 value.Option ??= new Dictionary<string, object>();
                 value.Option["compressed"] = "text";
-                var resolver = options.Resolver;
                 resolver.GetFormatterWithVerify<Dictionary<string, object>>()
                     .Serialize(ref writer, value.Option, options);
             }
