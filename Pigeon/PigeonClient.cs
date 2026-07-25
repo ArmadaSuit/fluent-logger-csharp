@@ -16,8 +16,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using MessagePack;
 using MessagePack.Resolvers;
@@ -31,7 +31,6 @@ namespace Pigeon
     /// </summary>
     public class PigeonClient : IPigeonClient
     {
-
         private static readonly IFormatterResolver DefaultResolver = CompositeResolver.Create(
             BuiltinResolver.Instance,
             AttributeFormatterResolver.Instance,
@@ -48,8 +47,7 @@ namespace Pigeon
 
         private bool _disposed;
 
-        private Stream _stream;
-        private readonly TcpClient _client;
+        private Socket? _socket;
         private readonly PigeonConfig _config;
         private readonly MessagePackSerializerOptions _options;
 
@@ -60,16 +58,6 @@ namespace Pigeon
         public PigeonClient(PigeonConfig config)
         {
             _config = config;
-            _client = new TcpClient();
-            if (config.SendTimeout.HasValue)
-            {
-                _client.SendTimeout = config.SendTimeout.Value;
-            }
-
-            if (config.ReceiveTimeout.HasValue)
-            {
-                _client.ReceiveTimeout = config.ReceiveTimeout.Value;
-            }
 
             _options = config.SerializerOptions ?? DefaultOptions;
         }
@@ -80,21 +68,46 @@ namespace Pigeon
         /// <returns>Task</returns>
         public async Task ConnectAsync()
         {
-            if (_config.ConnectTimeout.HasValue)
+            _socket?.Dispose();
+            _socket = null;
+
+            var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+
+            if (_config.SendTimeout.HasValue)
             {
-                // References
-                // https://makolyte.com/how-to-set-a-timeout-for-tcpclient-connectasync/
-                var cancelTask = Task.Delay(_config.ConnectTimeout.Value);
-                var connectTask = _client.ConnectAsync(_config.Host, _config.Port);
-                await await Task.WhenAny(connectTask, cancelTask);
-                if (cancelTask.IsCompleted)
-                {
-                    throw new SocketException((int) SocketError.TimedOut);
-                }
+                socket.SendTimeout = _config.SendTimeout.Value;
             }
-            else
+
+            if (_config.ReceiveTimeout.HasValue)
             {
-                await _client.ConnectAsync(_config.Host, _config.Port).ConfigureAwait(false);
+                socket.ReceiveTimeout = _config.ReceiveTimeout.Value;
+            }
+
+            try
+            {
+                if (_config.ConnectTimeout.HasValue)
+                {
+                    using var cts = new CancellationTokenSource(_config.ConnectTimeout.Value);
+                    try
+                    {
+                        await socket.ConnectAsync(_config.Host, _config.Port, cts.Token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        throw new SocketException((int)SocketError.TimedOut);
+                    }
+                }
+                else
+                {
+                    await socket.ConnectAsync(_config.Host, _config.Port, CancellationToken.None).ConfigureAwait(false);
+                }
+
+                _socket = socket;
+            }
+            catch
+            {
+                socket.Dispose();
+                throw;
             }
         }
 
@@ -104,7 +117,7 @@ namespace Pigeon
         /// <returns>Task</returns>
         private async Task EnsureConnected()
         {
-            if (!_client.Connected)
+            if (_socket is not { Connected: true })
             {
                 await ConnectAsync().ConfigureAwait(false);
             }
@@ -119,11 +132,21 @@ namespace Pigeon
         {
             await EnsureConnected();
 
-            _stream = _client.GetStream();
+            var bytesSent = 0;
+            while (bytesSent < data.Length)
+            {
+                var sent = await _socket!.SendAsync(
+                    data.AsMemory(bytesSent),
+                    SocketFlags.None,
+                    CancellationToken.None).ConfigureAwait(false);
 
-            await _stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
-            // it is unnecessary
-            // await _stream.FlushAsync().ConfigureAwait(false);
+                if (sent == 0)
+                {
+                    throw new SocketException((int)SocketError.ConnectionReset);
+                }
+
+                bytesSent += sent;
+            }
         }
 
         /// <summary>
@@ -247,8 +270,7 @@ namespace Pigeon
             {
                 if (disposing)
                 {
-                    _stream?.Dispose();
-                    _client?.Dispose();
+                    _socket?.Dispose();
                 }
 
                 _disposed = true;
